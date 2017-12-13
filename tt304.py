@@ -44,7 +44,8 @@ class TT304(object):
 
         Arguments:
             port {str} -- serial port address to be opened (/dev/* or COM*)
-    
+            devno {int} -- device number of the controller. If mode is RS232,
+                           this number should be 0. 
             retries {number} -- number of trails for the query and pquery
                                 command before report failure. 
             timeout {number} -- default serial timeout
@@ -252,7 +253,7 @@ class TT304(object):
         """
 
         if reply == None or len(reply) == 0:
-            raise Exception('Cannot unpack empty reply')
+            raise ValueError('Cannot unpack empty reply')
 
         checksum_ok = True
 
