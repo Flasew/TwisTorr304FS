@@ -6,6 +6,7 @@ from __future__ import print_function
 import time
 import struct
 import serial
+import serial.rs485
 
 ACK = 0x06
 NACK = 0x15
@@ -37,36 +38,25 @@ def crc(byte_list):
 
 class TT304(object):
 
-    def __init__(self, port=None, retries=3, 
-                 rs485=False, devno=0, timeout=0, **kwargs):
+    def __init__(self, port=None, retries=3, devno=0, timeout=0, **kwargs):
         """Constructor of an TwisWorr304FS object. Instantiates an object 
         with the given devno, port, and other relative serial commands.
 
         Arguments:
             port {str} -- serial port address to be opened (/dev/* or COM*)
-            rs485 {bool} -- if the device runs in RS485 mode
+    
             retries {number} -- number of trails for the query and pquery
                                 command before report failure. 
-            devno {number} -- device number for RS485 connection, or 0 for 
-                              RS232 connection.
             timeout {number} -- default serial timeout
             kwargs {list} -- other keyword argument to be passed to the 
                              serial.Serial constructor
 
-        Raises
-            ValueError -- when mode is RS232 but devno is not 0.
         """
-        if not rs485 and devno != 0:
-            raise ValueError("devno must be 0 for RS232 devices")
 
         self.devno = devno
-        self.rs485 = rs485
         self.retries = retries
 
         self.ser = serial.Serial(port, timeout=timeout, **kwargs)
-
-        if self.rs485:
-            self.ser.rs485_mode = serial.rs485.RS485Settings()
 
         if not self.ser.is_open:
             self.ser.open()
